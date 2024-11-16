@@ -1,23 +1,56 @@
-body {
-  font-family: Arial, sans-serif;
+/* Reset general */
+* {
   margin: 0;
   padding: 0;
-  background: linear-gradient(120deg, #e0f7fa, #f1f8e9);
+  box-sizing: border-box;
 }
 
+/* Cuerpo */
+body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(120deg, #e0f7fa, #f1f8e9);
+  color: #333;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding-top: 20px;
+}
+
+/* Header - Adaptado para estilo sin fondo */
 header {
   text-align: center;
-  padding: 20px;
-  background: #4a90e2;
-  color: white;
+  margin-top: 30px; /* Ajustamos el margen para que no esté tan arriba */
+  animation: fadeInDown 1s ease-in-out;
 }
 
+header h1 {
+  font-size: 2.8rem; /* Tamaño del título ajustado */
+  color: #333; /* Color oscuro */
+  letter-spacing: 2px; /* Espaciado entre letras */
+  text-transform: uppercase; /* Hacer el texto en mayúsculas */
+  font-weight: bold;
+}
+
+header .highlight {
+  color: #4a90e2; /* Resaltar con el color primario de la landing */
+}
+
+/* Wrapper principal */
 .wrapper {
+  width: 100%;
+  max-width: 900px;
+  margin: 20px auto;
   padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.8); /* Fondo semitransparente */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 1.5s ease-in-out;
 }
 
+/* Botones */
 .buttons {
   display: flex;
   justify-content: center;
@@ -34,6 +67,7 @@ header {
   background: #4a90e2;
   color: white;
   transition: background 0.3s;
+  min-width: 150px;
 }
 
 .btn:hover {
@@ -45,8 +79,10 @@ header {
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
+  margin-bottom: 20px;
 }
 
+/* Footer */
 footer {
   text-align: center;
   margin-top: auto;
@@ -54,8 +90,6 @@ footer {
   background: #f4f4f9;
   width: 100%;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-  position: absolute;
-  bottom: 0;
 }
 
 footer p {
@@ -88,4 +122,68 @@ footer .social-links .icon {
   width: 20px;
   height: 20px;
   margin-right: 8px;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 2rem;
+  }
+
+  .intro p {
+    font-size: 1rem;
+  }
+
+  .cta .button {
+    font-size: 1rem;
+    padding: 10px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 1.5rem;
+  }
+
+  .btn {
+    padding: 10px;
+    font-size: 1rem;
+    width: 100%;
+  }
+
+  .buttons {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .chart-container {
+    padding: 10px;
+  }
+
+  #chart {
+    height: 250px !important;
+  }
 }

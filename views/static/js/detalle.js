@@ -11,7 +11,7 @@ function renderChart(data, labels, title) {
   chart = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: labels,  
+      labels: labels,
       datasets: [{
         label: title,
         data: data,
@@ -35,6 +35,7 @@ function renderChart(data, labels, title) {
   });
 }
 
+
 // Función para obtener el chipid de los parámetros de la URL
 function getChipIdFromUrl() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -51,12 +52,17 @@ const chipid = getChipIdFromUrl();
 async function loadWeatherData(chipid) {
   const response = await fetch(`https://mattprofe.com.ar/proyectos/app-estacion/datos.php?chipid=${chipid}&cant=6`);
   const data = await response.json();
+  console.log(data); // Verifica que la propiedad 'ffmc' esté presente en los datos
+
   return data;
 }
 
 // Función para manejar la carga de diferentes tipos de datos meteorológicos
+// Función para manejar la carga de diferentes tipos de datos meteorológicos
 async function updateChart(type) {
   const data = await loadWeatherData(chipid); // Cargamos los datos con el chipid proporcionado
+
+  console.log(data); // Para revisar los datos devueltos y ver si el campo `ffmc` está presente
 
   let chartData = [];
   let chartLabels = [];
@@ -96,6 +102,14 @@ async function updateChart(type) {
       chartLabels = data.map(entry => entry.fecha);
       chartTitle = 'Velocidad del Viento (km/h)';
       break;
+    case 'fire-index':
+      chartData = data.map(entry => {
+        const fireIndex = parseFloat(entry.ffmc);  // Verifica que `ffmc` sea la propiedad correcta
+        return isNaN(fireIndex) ? null : fireIndex;  // Evitar valores inválidos
+      }).filter(value => value !== null);  // Filtrar valores inválidos
+      chartLabels = data.map(entry => entry.fecha);
+      chartTitle = 'Índice de Fuego (FFMC)';
+      break;
     default:
       chartData = [];
       chartLabels = [];
@@ -106,11 +120,14 @@ async function updateChart(type) {
   renderChart(chartData, chartLabels, chartTitle);
 }
 
+
+
 // Llama al gráfico inicial, por ejemplo, de temperatura
 updateChart('temperature');
 
-// Eventos para los botones
+// Asegúrate de que estos eventos de los botones están en tu código
 document.getElementById('btn-temperature').addEventListener('click', () => updateChart('temperature'));
 document.getElementById('btn-humidity').addEventListener('click', () => updateChart('humidity'));
 document.getElementById('btn-pressure').addEventListener('click', () => updateChart('pressure'));
 document.getElementById('btn-wind').addEventListener('click', () => updateChart('wind'));
+document.getElementById('btn-fire-index').addEventListener('click', () => updateChart('fire-index'));
