@@ -3,13 +3,15 @@ const ctx = document.getElementById('chart').getContext('2d');
 let chart;
 
 // Función para crear gráficos dinámicos
-function renderChart(data, label, title) {
-  if (chart) chart.destroy(); // Destruir gráfico previo
+function renderChart(data, labels, title) {
+  if (chart) {
+    chart.destroy(); // Destruir gráfico previo
+  }
 
   chart = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: label,  
+      labels: labels,  
       datasets: [{
         label: title,
         data: data,
@@ -26,47 +28,89 @@ function renderChart(data, label, title) {
         legend: { display: true }
       },
       scales: {
-        x: { title: { display: true, text: 'Tiempo' } },
+        x: { title: { display: true, text: 'Fecha' } },
         y: { title: { display: true, text: title } }
       }
     }
   });
 }
 
-// Datos de ejemplo para cada tipo
-const dataSamples = {
-  temperature: { data: [22, 25, 21, 23, 25], label: ['10:00', '11:00', '12:00', '13:00', '14:00'], title: 'Temperatura (°C)' },
-  humidity: { data: [60, 62, 65, 63, 64], label: ['10:00', '11:00', '12:00', '13:00', '14:00'], title: 'Humedad (%)' },
-  pressure: { data: [1010, 1012, 1015, 1013, 1014], label: ['10:00', '11:00', '12:00', '13:00', '14:00'], title: 'Presión Atmosférica (hPa)' },
-  wind: { data: [5, 10, 15, 10, 8], label: ['10:00', '11:00', '12:00', '13:00', '14:00'], title: 'Velocidad del Viento (km/h)' },
-  fireIndex: { data: [1.2, 1.5, 1.8, 2.0, 1.7], label: ['10:00', '11:00', '12:00', '13:00', '14:00'], title: 'Índice de Fuego' }
-};
+// Función para obtener el chipid de los parámetros de la URL
+function getChipIdFromUrl() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('chipid'); // Obtiene el valor del parámetro 'chipid'
+}
+
+// Usamos esta función para asignar el valor de chipid
+const chipid = getChipIdFromUrl();
+
+// Ahora, `chipid` estará disponible y puedes usarlo en la llamada a `loadWeatherData`
+
+
+// Función para cargar los datos meteorológicos
+async function loadWeatherData(chipid) {
+  const response = await fetch(`https://mattprofe.com.ar/proyectos/app-estacion/datos.php?chipid=${chipid}&cant=6`);
+  const data = await response.json();
+  return data;
+}
+
+// Función para manejar la carga de diferentes tipos de datos meteorológicos
+async function updateChart(type) {
+  const data = await loadWeatherData(chipid); // Cargamos los datos con el chipid proporcionado
+
+  let chartData = [];
+  let chartLabels = [];
+  let chartTitle = '';
+
+  // Extraer datos según el tipo de gráfico
+  switch(type) {
+    case 'temperature':
+      chartData = data.map(entry => {
+        const temperature = parseFloat(entry.temperatura);
+        return isNaN(temperature) ? null : temperature;  // Evitar valores inválidos
+      }).filter(value => value !== null);  // Filtrar valores inválidos
+      chartLabels = data.map(entry => entry.fecha); // Usamos las fechas como etiquetas
+      chartTitle = 'Temperatura (°C)';
+      break;
+    case 'humidity':
+      chartData = data.map(entry => {
+        const humidity = parseFloat(entry.humedad);
+        return isNaN(humidity) ? null : humidity;  // Evitar valores inválidos
+      }).filter(value => value !== null);  // Filtrar valores inválidos
+      chartLabels = data.map(entry => entry.fecha);
+      chartTitle = 'Humedad (%)';
+      break;
+    case 'pressure':
+      chartData = data.map(entry => {
+        const pressure = parseFloat(entry.presion);
+        return isNaN(pressure) ? null : pressure;  // Evitar valores inválidos
+      }).filter(value => value !== null);  // Filtrar valores inválidos
+      chartLabels = data.map(entry => entry.fecha);
+      chartTitle = 'Presión Atmosférica (hPa)';
+      break;
+    case 'wind':
+      chartData = data.map(entry => {
+        const wind = parseFloat(entry.viento);
+        return isNaN(wind) ? null : wind;  // Evitar valores inválidos
+      }).filter(value => value !== null);  // Filtrar valores inválidos
+      chartLabels = data.map(entry => entry.fecha);
+      chartTitle = 'Velocidad del Viento (km/h)';
+      break;
+    default:
+      chartData = [];
+      chartLabels = [];
+      chartTitle = 'Datos no disponibles';
+  }
+
+  // Llamamos a la función renderChart con los datos formateados
+  renderChart(chartData, chartLabels, chartTitle);
+}
+
+// Llama al gráfico inicial, por ejemplo, de temperatura
+updateChart('temperature');
 
 // Eventos para los botones
-document.getElementById('btn-temperature').addEventListener('click', () => {
-  const { data, label, title } = dataSamples.temperature;
-  renderChart(data, label, title);
-});
-
-document.getElementById('btn-humidity').addEventListener('click', () => {
-  const { data, label, title } = dataSamples.humidity;
-  renderChart(data, label, title);
-});
-
-document.getElementById('btn-pressure').addEventListener('click', () => {
-  const { data, label, title } = dataSamples.pressure;
-  renderChart(data, label, title);
-});
-
-document.getElementById('btn-wind').addEventListener('click', () => {
-  const { data, label, title } = dataSamples.wind;
-  renderChart(data, label, title);
-});
-
-document.getElementById('btn-fire-index').addEventListener('click', () => {
-  const { data, label, title } = dataSamples.fireIndex;
-  renderChart(data, label, title);
-});
-
-// Inicializa con un gráfico predeterminado
-renderChart(dataSamples.temperature.data, dataSamples.temperature.label, dataSamples.temperature.title);
+document.getElementById('btn-temperature').addEventListener('click', () => updateChart('temperature'));
+document.getElementById('btn-humidity').addEventListener('click', () => updateChart('humidity'));
+document.getElementById('btn-pressure').addEventListener('click', () => updateChart('pressure'));
+document.getElementById('btn-wind').addEventListener('click', () => updateChart('wind'));
