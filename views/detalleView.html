@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle de Estación</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Librería para gráficos -->
+  <link rel="stylesheet" href="views/static/css/detalle.css">
+</head>
+<body>
+  <header>
+    <h1>Detalle de Estación</h1>
+  </header>
+  <main class="wrapper">
+    <div class="buttons">
+      <button id="btn-temperature" class="btn">Temperatura</button>
+      <button id="btn-humidity" class="btn">Humedad</button>
+      <button id="btn-pressure" class="btn">Presión Atmosférica</button>
+      <button id="btn-wind" class="btn">Viento</button>
+      <button id="btn-fire-index" class="btn">Índices de Fuego</button>
+    </div>
+    <div class="chart-container">
+      <canvas id="chart"></canvas>
+    </div>
+  </main>
+  <footer>
+    <p>Diseñado y construido por <strong>Sebastian Nicolas Choque Jarpa</strong>.</p>
+    <div class="social-links">
+      <a href="https://github.com/ChoqueIV" target="_blank" class="github">
+        <img src="https://cdn-icons-png.flaticon.com/512/733/733553.png" alt="GitHub" class="icon">
+        ChoqueIV
+      </a>
+      <a href="https://gitlab.com/sebachoque03" target="_blank" class="gitlab">
+        <img src="https://cdn-icons-png.flaticon.com/512/5968/5968853.png" alt="GitLab" class="icon">
+        Sebastian Choque
+      </a>
+    </div>
+  </footer>
+  <script src="views/static/js/detalle.js"></script>
+</body>
+</html>
