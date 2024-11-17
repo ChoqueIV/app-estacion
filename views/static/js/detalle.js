@@ -1,11 +1,9 @@
-// Configuración inicial del gráfico
 const ctx = document.getElementById('chart').getContext('2d');
 let chart;
 
-// Función para crear gráficos dinámicos
 function renderChart(data, labels, title) {
   if (chart) {
-    chart.destroy(); // Destruir gráfico previo
+    chart.destroy();
   }
 
   chart = new Chart(ctx, {
@@ -36,77 +34,68 @@ function renderChart(data, labels, title) {
 }
 
 
-// Función para obtener el chipid de los parámetros de la URL
 function getChipIdFromUrl() {
   const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get('chipid'); // Obtiene el valor del parámetro 'chipid'
+  return urlParams.get('chipid');
 }
 
-// Usamos esta función para asignar el valor de chipid
 const chipid = getChipIdFromUrl();
 
-// Ahora, `chipid` estará disponible y puedes usarlo en la llamada a `loadWeatherData`
-
-
-// Función para cargar los datos meteorológicos
 async function loadWeatherData(chipid) {
   const response = await fetch(`https://mattprofe.com.ar/proyectos/app-estacion/datos.php?chipid=${chipid}&cant=6`);
   const data = await response.json();
-  console.log(data); // Verifica que la propiedad 'ffmc' esté presente en los datos
+  console.log(data); 
 
   return data;
 }
 
-// Función para manejar la carga de diferentes tipos de datos meteorológicos
-// Función para manejar la carga de diferentes tipos de datos meteorológicos
 async function updateChart(type) {
-  const data = await loadWeatherData(chipid); // Cargamos los datos con el chipid proporcionado
+  const data = await loadWeatherData(chipid);
 
-  console.log(data); // Para revisar los datos devueltos y ver si el campo `ffmc` está presente
+  console.log(data);
 
   let chartData = [];
   let chartLabels = [];
   let chartTitle = '';
 
-  // Extraer datos según el tipo de gráfico
   switch(type) {
     case 'temperature':
       chartData = data.map(entry => {
         const temperature = parseFloat(entry.temperatura);
-        return isNaN(temperature) ? null : temperature;  // Evitar valores inválidos
-      }).filter(value => value !== null);  // Filtrar valores inválidos
-      chartLabels = data.map(entry => entry.fecha); // Usamos las fechas como etiquetas
+        return isNaN(temperature) ? null : temperature;
+      }).filter(value => value !== null);
+      chartLabels = data.map(entry => entry.fecha);
       chartTitle = 'Temperatura (°C)';
       break;
     case 'humidity':
       chartData = data.map(entry => {
         const humidity = parseFloat(entry.humedad);
-        return isNaN(humidity) ? null : humidity;  // Evitar valores inválidos
-      }).filter(value => value !== null);  // Filtrar valores inválidos
+        return isNaN(humidity) ? null : humidity;
+      }).filter(value => value !== null);
       chartLabels = data.map(entry => entry.fecha);
       chartTitle = 'Humedad (%)';
       break;
     case 'pressure':
       chartData = data.map(entry => {
         const pressure = parseFloat(entry.presion);
-        return isNaN(pressure) ? null : pressure;  // Evitar valores inválidos
-      }).filter(value => value !== null);  // Filtrar valores inválidos
+        return isNaN(pressure) ? null : pressure;
+      }).filter(value => value !== null);
       chartLabels = data.map(entry => entry.fecha);
       chartTitle = 'Presión Atmosférica (hPa)';
       break;
     case 'wind':
       chartData = data.map(entry => {
         const wind = parseFloat(entry.viento);
-        return isNaN(wind) ? null : wind;  // Evitar valores inválidos
-      }).filter(value => value !== null);  // Filtrar valores inválidos
+        return isNaN(wind) ? null : wind;
+      }).filter(value => value !== null);
       chartLabels = data.map(entry => entry.fecha);
       chartTitle = 'Velocidad del Viento (km/h)';
       break;
     case 'fire-index':
       chartData = data.map(entry => {
-        const fireIndex = parseFloat(entry.ffmc);  // Verifica que `ffmc` sea la propiedad correcta
-        return isNaN(fireIndex) ? null : fireIndex;  // Evitar valores inválidos
-      }).filter(value => value !== null);  // Filtrar valores inválidos
+        const fireIndex = parseFloat(entry.ffmc);
+        return isNaN(fireIndex) ? null : fireIndex;
+      }).filter(value => value !== null);
       chartLabels = data.map(entry => entry.fecha);
       chartTitle = 'Índice de Fuego (FFMC)';
       break;
@@ -116,16 +105,11 @@ async function updateChart(type) {
       chartTitle = 'Datos no disponibles';
   }
 
-  // Llamamos a la función renderChart con los datos formateados
   renderChart(chartData, chartLabels, chartTitle);
 }
 
-
-
-// Llama al gráfico inicial, por ejemplo, de temperatura
 updateChart('temperature');
 
-// Asegúrate de que estos eventos de los botones están en tu código
 document.getElementById('btn-temperature').addEventListener('click', () => updateChart('temperature'));
 document.getElementById('btn-humidity').addEventListener('click', () => updateChart('humidity'));
 document.getElementById('btn-pressure').addEventListener('click', () => updateChart('pressure'));

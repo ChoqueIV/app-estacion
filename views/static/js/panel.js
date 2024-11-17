@@ -25,10 +25,10 @@ let main = document.querySelector("main");
 
 		/**
          * 
-         * @brief Realiza el logueo con el email y contraseña GET
-         * @param string nombre del usuario
-         * @param string pass contraseña del usuario
-         * @return json respuesta del intento de logueo
+         * @brief
+         * @param
+         * @param
+         * @return
          * 
          * */
         async function buscar(){

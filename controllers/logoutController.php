@@ -10,5 +10,5 @@
 	session_destroy();
 
 	// Redirecciona a landing
-	header("Location: landing");
+	header("Location: login");
  ?>

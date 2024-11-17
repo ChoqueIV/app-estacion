@@ -2,7 +2,7 @@
 
 	/**
 	* @file index.php
-	* @brief API Restful para el proyecto MorphYX
+	* @brief API Restful para el proyecto
 	* @author Matias Leonardo Baez
 	* @date 2024
 	* @contact elmattprofe@gmail.com
@@ -13,6 +13,14 @@
 
 	/*< La respuesta será un JSON*/
 	header("Content-Type: application/json");
+
+	/*< Se incluyen las variables de entorno*/
+	include_once '../env.php';
+
+	/*< Se incluyen las librerias para el envio de correo electrónico*/
+	include '../../lib/mp-mailer-master/Mailer/src/PHPMailer.php';
+	include '../lib/mp-mailer-master/Mailer/src/SMTP.php';
+	include '../../lib/mp-mailer-master/Mailer/src/Exception.php';
 
 	// captura el nombre del request method
 	$request_method = $_SERVER["REQUEST_METHOD"];
@@ -37,7 +45,7 @@
 	}
 	
 	/*< obtiene todo lo que esta delante de /api/ */
-	$url = str_replace("/api/","",$_SERVER["REDIRECT_URL"]);
+	$url = str_replace("/alumno/6811/app-estacion/api/","",$_SERVER["REDIRECT_URL"]);
 
 	/*< averigua si al final de la url hay una barra y la quita */
 	if(substr($url, -1) == "/"){
@@ -80,8 +88,16 @@
 		exit();	
 	}
 
-	/*< almacena la respuesta del método dentro de la posición list */
-	$response = ["load_errno" => 200 , "load_error" => "", "list" => $object->$name_of_method($request_method,$request)];
+	
+	// /*< genera el código único para que no se cachee la respuesta de la API*/
+	// $finger_print = md5($_ENV["PROJECT_WEB_TOKEN"].date("Y-m-d+H:i:s+").mt_rand(0, 5000));
+
+	// /*< almacena la respuesta del método dentro de la posición list */
+	// $response = ["fingerprint"=> $finger_print,"load_errno" => 200 , "load_error" => "", "list" => $object->$name_of_method($request)];
+
+
+	// /*< almacena la respuesta del método dentro de la posición list */
+	// $response = ["fingerprint"=> $finger_print,"load_errno" => 229 , "load_error" => "", "list" => $object->$name_of_method($request)];
 
 	/*< convierte la respuesta en un JSON */
 	echo json_encode($response);

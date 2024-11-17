@@ -6,6 +6,7 @@
 	// crea el objeto con la vista
 	$tpl = new Kiwi("panel");
 
+	var_dump($_SESSION["morphyx"]['user']);
 	// carga la vista
 	$tpl->loadTPL();
 

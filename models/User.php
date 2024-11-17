@@ -79,45 +79,26 @@
 		 * @return array que posee códigos de error especiales
 		 * 
 		 * */
-		function login($request_method, $form){
+		function login($user, $password){
 
-
-			if($request_method!="GET"){
-				return ["errno" => 410, "error" => "Metodo invalido"];
-			}
-
-			$email = $form["txt_email"];
-
-			$result = $this->query("CALL `login`('$email')");
-
-			// el email no existe
-			if(count($result)==0){
-				return ["error" => "Email no registrado", "errno" => 404];
+			$result = $this->query("CALL `login`('$user', '$password')");
+			if (empty($result)) {
+				return ["errno" => 404, "error" => "Acceso Invalido"];
 			}
 
 			$result = $result[0];
+			var_dump($this);
 
-			// si el email existe y la contraseña es valida
-			if($result["password"]==md5($form["txt_pass"]."morphyx")){
 
-				/**< autocarga de valores en los atributos de la clase */
-				foreach ($this->nameOfFields as $key => $value) {
-					$this->$value = $result[$value];
-				}
-
-				// para que los avatares sean gatitos
-				$this->avatar = str_replace("set5", "set4", $this->avatar); 
-
-				$_SESSION["morphyx"]['user'] = $this;
-
-				//var_dump($_SESSION);
-
-				return ["error" => "Acceso valido", "errno" => 200];
+			foreach ($this->nameOfFields as $key => $value) {
+				$this->$value = $result[$value];
 			}
+			/*< carga la clase en la sesión*/
+			$_SESSION["morphyx"] = $this;
 
-			// email existe pero la contraseña invalida
-			return ["error" => "Error de contraseña", "errno" => 405];
+			exit();
 
+			return ["error" => "Acceso valido", "errno" => 200];
 		}
 
 		/**

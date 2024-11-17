@@ -29,7 +29,7 @@
 
 	// Listas de acceso dependiendo del estado del usuario
 	$controlador_login = ["logout", "perfil", "abandonar"];
-	$controlador_anonimo = ["panel", "landing", "login", "register"];
+	$controlador_anonimo = ["login", "panel", "landing", "register"];
 
 	// sesion iniciada
 	if(isset($_SESSION['morphyx'])){
