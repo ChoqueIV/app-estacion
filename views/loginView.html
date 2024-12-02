@@ -8,21 +8,84 @@
 </head>
 <body>
     <div class="login-container">
-    		
         <h1>Iniciar Sesión</h1>
-        <form action="login" method="POST">
-            <div class="input-group">
-                <label for="username">Usuario</label>
-                <input type="email" id="username" name="username" required placeholder="Ingresa tu usuario">
-            </div>
-            <div class="input-group">
-                <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password" required placeholder="Ingresa tu contraseña">
-            </div>
-            <button name="btn-login" type="submit" class="btn-login">Iniciar sesión</button>
-            <p class="error-message" id="error-message"></p>
-        </form>
-        <p class="register-link">¿No tienes cuenta? <a href="#">Regístrate aquí</a></p>
+		<form action="login" method="POST" id="login-form">
+		    <div class="input-group">
+		        <label for="username">Usuario</label>
+		        <input type="text" id="username" name="username" required placeholder="Ingresa tu usuario">
+		    </div>
+		    <div class="input-group">
+		        <label for="password">Contraseña</label>
+		        <input type="password" id="password" name="password" required placeholder="Ingresa tu contraseña">
+		    </div>
+		    <button id="btn_login" type="submit" class="btn-login">Iniciar sesión</button>
+		    <p class="error-message" id="error-message"></p>
+		</form>
+
+
+        <p class="register-link">¿No tienes cuenta? <a href="register">Regístrate aquí</a></p>
     </div>
+
+<script type="text/javascript">
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const btnLogin = document.getElementById("btn_login");
+        const username = document.getElementById("username");
+        const password = document.getElementById("password");
+        const errorMessage = document.getElementById("error-message");
+        const form = document.getElementById("login-form");
+
+        form.addEventListener("submit", function (e) {
+		    e.preventDefault();
+
+		    login(username.value, password.value).then(data => {
+		        console.log(data);  // Verifica el contenido de la respuesta
+
+		        if (data.list.errno === 200) {
+		            window.location.href = "panel"; // Redirige al panel
+		        } else if (data.list.errno === 229) {
+		            window.location.href = "administrator"; // Redirige a administrador
+		        } else {
+		            errorMessage.textContent = data.list.error;  // Muestra el error de la respuesta
+		        }
+		    }).catch(err => {
+		        errorMessage.textContent = "Error al intentar iniciar sesión. Por favor, intenta de nuevo.";
+		        console.error(err);
+		    });
+		});
+
+
+    });
+
+    // Función que realiza el logueo
+    async function login(email, pass) {
+	    try {
+	        const response = await fetch("https://mattprofe.com.ar/alumno/6811/ACTIVIDADES/app-estacion/api/user/login?username=" + email + "&password=" + pass);
+
+	        // Verifica si la respuesta fue exitosa (status 200)
+	        if (!response.ok) {
+	            throw new Error(`Error HTTP: ${response.status}`);
+	        }
+
+	        const text = await response.text();  // Lee el cuerpo de la respuesta como texto
+	        console.log("Respuesta del servidor:", text);  // Verifica el contenido
+
+	        const contentType = response.headers.get("Content-Type");
+	        if (contentType && contentType.includes("application/json")) {
+	            const data = JSON.parse(text);  // Intenta parsear el texto como JSON
+	            return data;
+	        } else {
+	            throw new Error("La respuesta no es un JSON válido.");
+	        }
+
+	    } catch (err) {
+	        console.error('Error en la petición:', err);
+	        throw err;
+	    }
+	}
+
+</script>
+
 </body>
 </html>

@@ -5,6 +5,7 @@
   box-sizing: border-box;
 }
 
+/* Estilo base */
 body {
   font-family: 'Arial', sans-serif;
   background: linear-gradient(120deg, #e0f7fa, #f1f8e9);
@@ -14,31 +15,68 @@ body {
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
+  padding-top: 60px; /* Agregado para evitar que el contenido se superponga al header */
 }
 
 /* Header */
 header {
-  text-align: center;
-  margin-top: 50px;
-  animation: fadeInDown 1s ease-in-out;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
 }
 
-header h1 {
-  font-size: 2.8rem;
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+}
+
+.navbar .logo h1 {
+  font-size: 2.4rem;
   color: #333;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-header .highlight {
-  color: #4a90e2;
+.navbar .nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
 }
 
-/* Main Wrapper */
-.wrapper {
+.navbar .nav-links li {
+  font-size: 1rem;
+}
+
+.navbar .nav-links a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.navbar .nav-links a:hover {
+  background-color: #4a90e2;
+  color: #fff;
+}
+
+/* Contenido principal */
+main {
   width: 100%;
   max-width: 900px;
-  margin: 20px auto;
+  margin: 100px auto 20px auto; /* Ajustado para compensar el header fijo */
+  padding: 20px;
+  text-align: center;
+}
+
+/* Wrapper principal */
+.wrapper {
   padding: 20px;
   text-align: center;
   background: rgba(255, 255, 255, 0.8);
@@ -47,13 +85,14 @@ header .highlight {
   animation: fadeIn 1.5s ease-in-out;
 }
 
+/* Introducción */
 .intro p {
   font-size: 1.2rem;
   margin: 15px 0;
   color: #555;
 }
 
-/* Call to Action */
+/* Llamado a la acción (CTA) */
 .cta {
   margin-top: 30px;
 }
@@ -119,7 +158,6 @@ footer .social-links .icon {
   margin-right: 8px;
 }
 
-
 /* Animaciones */
 @keyframes fadeIn {
   from {
@@ -145,8 +183,32 @@ footer .social-links .icon {
 
 /* Responsivo */
 @media (max-width: 768px) {
-  header h1 {
-    font-size: 2rem;
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px;
+  }
+
+  .navbar .nav-links {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    padding-left: 0;
+  }
+
+  .navbar .nav-links li {
+    width: 100%;
+    padding: 10px 0;
+    text-align: left;
+  }
+
+  .navbar .nav-links a {
+    width: 100%;
+    padding: 10px 20px;
+  }
+
+  .navbar .logo h1 {
+    font-size: 1.8rem;
   }
 
   .intro p {

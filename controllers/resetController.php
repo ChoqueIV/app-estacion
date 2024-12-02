@@ -1,11 +1,11 @@
 <?php 
 
-	// crea el objeto con la vista
-	$tpl = new Kiwi("register");
+	$tpl = new Kiwi("reset");
 
-	// carga la vista
+	$usuario = new User();
+
 	$tpl->loadTPL();
-	
+
 	// se pasan las variables a la vista
 	$tpl->setVarsTPL($vars);
 
@@ -13,4 +13,5 @@
 	$tpl->printTPL();
 
 
- ?>
+?>
+ 

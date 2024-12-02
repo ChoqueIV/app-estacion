@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cambiar Contraseña - EcoClima</title>
+    <link rel="stylesheet" href="views/static/css/login.css">
+</head>
+<body>
+    <div class="login-container">
+        <h1>Cambiar Contraseña</h1>
+        <form id="reset-form" method="post" action="reset">
+            <input type="hidden" name="token_action" value="{{TOKEN}}">
+
+            <div class="input-group">
+                <label for="new-password">Nueva Contraseña</label>
+                <input type="password" id="new-password" name="new-password" required placeholder="Ingresa tu nueva contraseña">
+                <p id="new-password-error" class="error-message"></p>
+            </div>
+            
+            <div class="input-group">
+                <label for="confirm-password">Confirmar Contraseña</label>
+                <input type="password" id="confirm-password" name="confirm-password" required placeholder="Confirma tu nueva contraseña">
+                <p id="confirm-password-error" class="error-message"></p>
+            </div>
+            <button id="btn-reset" type="submit" class="btn-login">Cambiar Contraseña</button>
+            <p class="error-message" id="error-message"></p>
+        </form>
+
+        <p>¿Recuperaste tu cuenta? <a href="login">Iniciar sesión</a></p>
+    </div>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // Obtener el token de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token'); // Obtiene el valor del parámetro 'token'
+
+        if (!token) {
+            document.getElementById("error-message").textContent = "Token no válido o no encontrado.";
+            return; // Si no hay token, muestra error y detiene la ejecución.
+        }
+
+        const form = document.getElementById("reset-form");
+        const newPassword = document.getElementById("new-password");
+        const confirmPassword = document.getElementById("confirm-password");
+        const errorMessage = document.getElementById("error-message");
+        const btnReset = document.getElementById("btn-reset");
+        const newPasswordError = document.getElementById("new-password-error");
+        const confirmPasswordError = document.getElementById("confirm-password-error");
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            // Limpiar los errores anteriores
+            newPasswordError.textContent = "";
+            confirmPasswordError.textContent = "";
+            errorMessage.textContent = "";
+
+            // Validar que las contraseñas no estén vacías
+            if (newPassword.value.trim() === "") {
+                newPasswordError.textContent = "Por favor ingresa una nueva contraseña.";
+                return;
+            }
+
+            if (confirmPassword.value.trim() === "") {
+                confirmPasswordError.textContent = "Por favor confirma tu nueva contraseña.";
+                return;
+            }
+
+            // Validar que las contraseñas coincidan
+            if (newPassword.value !== confirmPassword.value) {
+                confirmPasswordError.textContent = "Las contraseñas no coinciden.";
+                return;
+            }
+
+            // Deshabilitar el botón para evitar múltiples envíos
+            btnReset.disabled = true;
+
+            // Aquí se enviaría la petición AJAX para resetear la contraseña
+            resetPassword(newPassword.value, token).then(data => {
+                console.log(data); // Verifica el contenido de la respuesta
+
+                if (data.success) {
+                    window.location.href = "login"; // Redirige a la página de login
+                } else {
+                    errorMessage.textContent = data.error || "Hubo un error al cambiar la contraseña. Por favor, intenta de nuevo.";
+                }
+            }).catch(err => {
+                errorMessage.textContent = "Error en la conexión. Por favor, intenta más tarde.";
+                console.error(err);
+            }).finally(() => {
+                // Habilitar el botón después de que se procese la solicitud
+                btnReset.disabled = false;
+            });
+        });
+    });
+
+    // Función que realiza el cambio de contraseña
+    async function resetPassword(newPassword, token) {
+        try {
+            const formData = new FormData();
+            formData.append('new-password', newPassword);
+            formData.append('token', token); // Enviar el token al backend
+
+            const response = await fetch('https://mattprofe.com.ar/alumno/6811/ACTIVIDADES/app-estacion/api/user/reset', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
+
+            const text = await response.text();
+            console.log("Respuesta del servidor:", text);
+
+            const contentType = response.headers.get("Content-Type");
+            if (contentType && contentType.includes("application/json")) {
+                const data = JSON.parse(text);
+                return data;
+            } else {
+                throw new Error("La respuesta no es un JSON válido.");
+            }
+        } catch (err) {
+            console.error('Error en la petición:', err);
+            throw err;
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -5,9 +5,9 @@
 		preparado para gmail
 	*/
 
-	define('REMITENTE', 'maproom01@gmail.com'); // <===USUARIO GMAIL
-	define('NOMBRE', 'Maproom'); // <===
-	define('PASSWORD', 'rxhd regb hoqw idue'); // <===TOKEN
+	define('REMITENTE', 'ecoclima30@gmail.com'); // <===USUARIO GMAIL
+	define('NOMBRE', 'EcoClima'); // <===
+	define('PASSWORD', 'vysb ylws dhoj bqzb'); // <===TOKEN
 
 	define('HOST_EMAIL', 'smtp.gmail.com');
 	define('PORT', '587');

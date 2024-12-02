@@ -17,7 +17,56 @@ body {
 
 }
 
-h1 {
+/* Header */
+header {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+}
+
+.navbar .logo h1 {
+  font-size: 2.4rem;
+  color: #333;
+  letter-spacing: 1px;
+}
+
+.navbar .nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.navbar .nav-links li {
+  font-size: 1rem;
+}
+
+.navbar .nav-links a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.navbar .nav-links a:hover {
+  background-color: #4a90e2;
+  color: #fff;
+}
+
+.titulo {
+      margin: 100px auto 20px auto; /* Ajustado para compensar el header fijo */
   font-size: 2.5rem;
   color: #333;
   margin-bottom: 20px;

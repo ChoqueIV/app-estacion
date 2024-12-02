@@ -1,81 +1,110 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Morphyx - Registro</title>
-
-	<link rel="stylesheet" type="text/css" href="views/static/css/vars.css">
-	<link rel="stylesheet" type="text/css" href="views/static/css/styles.css">
-	
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - EcoClima</title>
+    <link rel="stylesheet" href="views/static/css/login.css">
 </head>
 <body>
+    <div class="login-container">
+        <h1>Registrarse</h1>
+        <form action="register" method="POST" id="register-form">
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="Ingresa tu email">
+            </div>
+            <div class="input-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" required placeholder="Ingresa tu contraseña">
+            </div>
+            <div class="input-group">
+                <label for="confirm-password">Confirmar Contraseña</label>
+                <input type="password" id="confirm-password" name="confirm-password" required placeholder="Confirma tu contraseña">
+            </div>
+            <button id="btn_register" type="submit" class="btn-login">Registrar</button>
+            <p class="error-message" id="error-message"></p>
+            <!-- Mensaje de éxito que aparecerá después de un registro exitoso -->
+            <p class="success-message" id="success-message" style="display: none;"></p>
+        </form>
 
+        <p class="register-link">¿Ya tienes cuenta? <a href="login">Inicia sesión aquí</a></p>
+    </div>
 
-	<div id="wrapper">
+<script type="text/javascript">
+    // Espera a que el DOM esté completamente cargado
+    document.addEventListener("DOMContentLoaded", function () {
+        // Obtiene los elementos
+        const btnRegister = document.getElementById("btn_register");
+        const email = document.getElementById("email");
+        const password = document.getElementById("password");
+        const confirmPassword = document.getElementById("confirm-password");
+        const errorMessage = document.getElementById("error-message");
+        const successMessage = document.getElementById("success-message");
+        const form = document.getElementById("register-form");
 
-		<div id="header">
+        // Escucha el evento submit del formulario
+        form.addEventListener("submit", function (e) {
+            e.preventDefault(); // Previene la acción por defecto del formulario (recargar página)
 
-			<div id="hero">
-				<a href="landing">
-				<img src="img/system/hero.png" alt="">
-				</a>
-			</div>
-			
-			<div id="control">
-				<a href="login" class="css-button-rounded--yellow">Ingresar</a>
-			</div>
-			 
-	
-		</div>
-		 
-		<div id="content">
+            // Verifica que las contraseñas coincidan
+            if (password.value !== confirmPassword.value) {
+                errorMessage.textContent = "Las contraseñas no coinciden.";
+                successMessage.style.display = "none"; // Esconde el mensaje de éxito
+                return;
+            }
 
-			<div id="window">
-				
-				<div id="window__image">
-				
-				</div>
+            // Realiza el intento de registro
+            register(email.value, password.value).then(data => {
+                // Si el registro fue exitoso
+                if (data.list.errno === 200) {
+                    // Muestra el mensaje de éxito y oculta el de error
+                    successMessage.textContent = data.list.error; // Muestra el mensaje de éxito
+                    successMessage.style.display = "block"; // Hace visible el mensaje
+                    errorMessage.style.display = "none"; // Esconde el mensaje de error
+                } else {
+                    // Si el registro no es válido, muestra el error
+                    errorMessage.textContent = data.list.error;
+                    successMessage.style.display = "none"; // Esconde el mensaje de éxito
+                }
+            }).catch(err => {
+                // Si ocurre un error con la petición (por ejemplo, no hay conexión)
+                errorMessage.textContent = "Error al intentar registrarse. Por favor, intenta de nuevo.";
+                successMessage.style.display = "none"; // Esconde el mensaje de éxito
+                console.error(err);
+            });
+        });
+    });
 
-				<div id="window__description">
-					
-					 <h1>Registro</h1>
+    // Función que realiza el registro
+    async function register(email, pass) {
+        try {
+            const response = await fetch("https://mattprofe.com.ar/alumno/6811/ACTIVIDADES/app-estacion/api/user/register?email=" + email + "&password=" + pass);
 
-					<form action="" method="POST">
-						
-						<input type="text" name="txt_email" placeholder="Email" required>
-						<input type="text" name="txt_pass" placeholder="Contraseña" required>
-						<input type="submit" name="btn_register" value="Ingresar">
+            // Verifica si la respuesta fue exitosa (status 200)
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
 
-						<div>{{MSG_REGISTER_ERROR}}</div>
+            // Imprime la respuesta antes de intentar parsearla
+            const text = await response.text();  // Lee el cuerpo de la respuesta como texto
+            console.log("Respuesta del servidor:", text);  // Verifica el contenido
 
-					</form>
-				</div>
+            // Intenta parsear el contenido como JSON
+            const contentType = response.headers.get("Content-Type");
+            if (contentType && contentType.includes("application/json")) {
+                const data = JSON.parse(text);  // Intenta parsear el texto como JSON
+                return data;
+            } else {
+                throw new Error("La respuesta no es un JSON válido.");
+            }
 
-			</div>
-		</div>
-		 
+        } catch (err) {
+            console.error('Error en la petición:', err);
+            throw err;  // Lanza el error para manejarlo en el bloque catch externo
+        }
+    }
+</script>
 
-		<div id="footer">
-			
-			<div id="footer__content">
-					
-					<div id="footer__extra">
-						Diseñado y construido por el MattProfe. 
-					</div>
-
-					<div id="footer__author">
-						@mattprofe
-					</div>
-
-			</div>
-
-		</div>
-		 
-	 </div>
-
-
-
-	
 </body>
 </html>

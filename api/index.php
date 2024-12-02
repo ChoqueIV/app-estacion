@@ -18,9 +18,9 @@
 	include_once '../env.php';
 
 	/*< Se incluyen las librerias para el envio de correo electrónico*/
-	include '../../lib/mp-mailer-master/Mailer/src/PHPMailer.php';
+	include '../lib/mp-mailer-master/Mailer/src/PHPMailer.php';
 	include '../lib/mp-mailer-master/Mailer/src/SMTP.php';
-	include '../../lib/mp-mailer-master/Mailer/src/Exception.php';
+	include '../lib/mp-mailer-master/Mailer/src/Exception.php';
 
 	// captura el nombre del request method
 	$request_method = $_SERVER["REQUEST_METHOD"];
@@ -32,9 +32,19 @@
 				$request = $_GET;
 			break;
 
+		// Caso 'POST' en index.php
 		case 'POST':
-				$request = $_POST;
-			break;
+		    // Obtener el valor de los parámetros username y password
+		    if (isset($_POST['username']) && isset($_POST['password'])) {
+		        $username = $_POST['username'];
+		        $password = $_POST['password'];
+
+		        // Asegúrate de pasar ambos parámetros al método login
+		        $response = $object->$name_of_method($username, $password);
+		    } else {
+		        $response = ["load_errno" => 400, "load_error" => "Faltan parámetros"];
+		    }
+		    break;
 
 		case 'PUT':
 				/*< las variables que se envian por método PUT viajan en el body */
@@ -45,7 +55,7 @@
 	}
 	
 	/*< obtiene todo lo que esta delante de /api/ */
-	$url = str_replace("/alumno/6811/app-estacion/api/","",$_SERVER["REDIRECT_URL"]);
+	$url = str_replace("/alumno/6811/ACTIVIDADES/app-estacion/api/","",$_SERVER["REDIRECT_URL"]);
 
 	/*< averigua si al final de la url hay una barra y la quita */
 	if(substr($url, -1) == "/"){
@@ -89,15 +99,13 @@
 	}
 
 	
-	// /*< genera el código único para que no se cachee la respuesta de la API*/
-	// $finger_print = md5($_ENV["PROJECT_WEB_TOKEN"].date("Y-m-d+H:i:s+").mt_rand(0, 5000));
-
-	// /*< almacena la respuesta del método dentro de la posición list */
-	// $response = ["fingerprint"=> $finger_print,"load_errno" => 200 , "load_error" => "", "list" => $object->$name_of_method($request)];
+	/*< genera el código único para que no se cachee la respuesta de la API*/
+	$finger_print = md5($_ENV["PROJECT_WEB_TOKEN"].date("Y-m-d+H:i:s+").mt_rand(0, 5000));
 
 
-	// /*< almacena la respuesta del método dentro de la posición list */
-	// $response = ["fingerprint"=> $finger_print,"load_errno" => 229 , "load_error" => "", "list" => $object->$name_of_method($request)];
+
+	/*< almacena la respuesta del método dentro de la posición list */
+	$response = ["fingerprint"=> $finger_print,"load_errno" => 229 , "load_error" => "", "list" => $object->$name_of_method($request)];
 
 	/*< convierte la respuesta en un JSON */
 	echo json_encode($response);
